@@ -1,0 +1,25 @@
+--
+-- File generated with SQLiteStudio v3.3.2 on Mon Mar 22 13:35:23 2021
+--
+-- Text encoding used: UTF-8
+--
+PRAGMA foreign_keys = off;
+BEGIN TRANSACTION;
+
+-- Table: artists
+CREATE TABLE artists (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, name TEXT NOT NULL UNIQUE);
+
+-- Table: genres
+CREATE TABLE genres (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, name TEXT NOT NULL UNIQUE);
+
+-- Table: playlists
+CREATE TABLE playlists (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, title TEXT NOT NULL, user_id INTEGER REFERENCES users (id) NOT NULL);
+
+-- Table: songs
+CREATE TABLE songs (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, title TEXT NOT NULL, artist_id INTEGER REFERENCES artists (id) NOT NULL, playlist_id INTEGER REFERENCES playlists (id) NOT NULL, grenre_id INTEGER REFERENCES genres (id) NOT NULL);
+
+-- Table: users
+CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, username TEXT NOT NULL UNIQUE, password TEXT NOT NULL, email TEXT UNIQUE NOT NULL, dob DATE);
+
+COMMIT TRANSACTION;
+PRAGMA foreign_keys = on;

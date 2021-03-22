@@ -1,7 +1,7 @@
 const express = require('express')
 const sqlite3 = require('sqlite3')
 const app = new express()
-const db = new sqlite3.Database('./db/playlist.db')
+const db = new sqlite3.Database('./db/dotify.db')
 
 app.use(express.static('public'))
 app.use(express.json())
