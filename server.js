@@ -9,6 +9,7 @@ app.use(express.json())
 app.get("/", (req, res) => {
     res.redirect("/home/index.html")
 })
+//For reference- https://expressjs.com/en/guide/routing.html
 
 /**
  * 404 Page | Always keep as final get()
@@ -20,4 +21,58 @@ app.get("*", (req, res) => {
     <a href="/home/index.html">Back to home</a>`)
 })
 
-app.listen(3000, () => console.log("Server started"))
+app.post("/login", (req, res) => {
+    const user = req.body
+    const loginSQL = "SELECT id FROM users WHERE username = ? AND password = ?"
+    db.all(loginSQL, [user.username, user.password], (err, rows) => {//Look at using db.get() instead of db.all() - https://www.sqlitetutorial.net/sqlite-nodejs/query/ - I think all() gives an array when get() gives us an object as the first row the db finds
+        if (err) console.error(err)
+        if (rows && rows.length > 0) {
+            res.send({
+                message: "Successful login!",
+                id: rows[0].id
+            })
+        }
+        else {
+            res.send({
+                message: "Invalid Username or Password."
+            })
+        }
+    })
+})
+
+app.post("/create", (req, res) => {
+    const user = req.body
+    const usernameSQL = "SELECT id FROM users WHERE username = ?"
+    db.all(usernameSQL, [user.username], (err, rows) => {
+        if (err) console.error(err)
+        if (!(rows && rows.length > 0)) {
+            const emailSQL = "SELECT id FROM users WHERE email = ?"
+            db.all(emailSQL, [user.email], (err, rows) => {
+                if (err) console.error(err)
+                if (!(rows && rows.length > 0)) {
+                    const createSQL = "INSERT INTO users (username, password, email, dob) VALUES (?, ?, ?, ?)"
+                    db.run(createSQL, [user.username, user.password, user.email, user.dob], (err) => {
+                        if (err) console.error(err)
+                        if (!this.lastID) this.lastID = 0
+                        res.send({
+                            message: "Your account was successfully created.",
+                            id: this.lastID
+                        })
+                    })
+                }
+                else {
+                    res.send({
+                        message: `The email ${user.email} is already in use.`
+                    })
+                }
+            })
+        }
+        else {
+            res.send({
+                message: `The username ${user.username} is already in use.`
+            })
+        }
+    })
+})
+
+app.listen(3000, console.log("Server started"))
