@@ -31,7 +31,7 @@ function create(e) {
     }
     fetch("/create", {
         body: JSON.stringify({
-            username: usernmae,
+            username: username,
             password: password,
             email: document.getElementById("email").value,
             dob: document.getElementById("dob").value
