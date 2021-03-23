@@ -11,6 +11,14 @@ app.get("/", (req, res) => {
 })
 //For reference- https://expressjs.com/en/guide/routing.html
 
+app.get("/userData", (req,res) => {
+    const userSql = "SELECT * FROM users"
+    db.all(userSql, [], (err, rows) => {
+        if (err) console.error(err)
+        res.send(rows)
+    })
+})
+
 /**
  * 404 Page | Always keep as final get()
  */
