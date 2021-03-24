@@ -3,32 +3,37 @@ document.getElementById("create").onsubmit = create
 let $error = document.getElementById("error")
 
 function create(e) {
-    let valid = false
+    e.preventDefault()
+
     let username = document.getElementById("username").value
     let password = document.getElementById("password").value
-    e.preventDefault()
+
     switch (validUsername(username)) {
         case "length":
-            $error.innerHTML = `<h3>Username must be 8 - 32 characters long.</h3>`
-            break;
+            $error.innerHTML = `<h4>Username must be 8 - 32 characters long.</h4>`
+            return;//note to self, eric. mention return vs break.
     }
     if (password != document.getElementById("password2").value) {
-        $error.innerHTML = `<h3>Your passwords do not match.</h3>`
+        $error.innerHTML = `<h4>Your passwords do not match.</h4>`
     }
     switch (validPassword(password)) {
         case "length":
-            $error.innerHTML = `<h3>Password must be 8 - 32 characters long.</h3>`
-            break;
+            $error.innerHTML = `<h4>Password must be 8 - 32 characters long.</h4>`
+            return;
         case "lower":
-            $error.innerHTML = `<h3>Password must contain at least one lowercase letter</h3>`
-            break;
+            $error.innerHTML = `<h4>Password must contain at least one lowercase letter</h4>`
+            return;
         case "upper":
-            $error.innerHTML = `<h3>Password must contain at least one uppercase letter</h3>`
-            break;
+            $error.innerHTML = `<h4>Password must contain at least one uppercase letter</h4>`
+            return;
         case "number":
-            $error.innerHTML = `<h3>Password must contain at least one number</h3>`
+            $error.innerHTML = `<h4>Password must contain at least one number</h4>`
+            return;
+        default:
+            $error.innerHTML = ``
             break;
     }
+
     fetch("/create", {
         body: JSON.stringify({
             username: username,

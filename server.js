@@ -6,10 +6,17 @@ const db = new sqlite3.Database('./db/dotify.db')
 app.use(express.static('public'))
 app.use(express.json())
 
-app.get("/", (req, res) => {
+app.get("/", (req, res) => {//For future reference- https://expressjs.com/en/guide/routing.html
     res.redirect("/home/index.html")
 })
-//For reference- https://expressjs.com/en/guide/routing.html
+
+app.get("/userData", (req,res) => {
+    const userSql = "SELECT * FROM users"
+    db.all(userSql, [], (err, rows) => {
+        if (err) console.error(err)
+        res.send(rows)
+    })
+})
 
 /**
  * 404 Page | Always keep as final get()
@@ -28,13 +35,12 @@ app.post("/login", (req, res) => {
         if (err) console.error(err)
         if (rows && rows.length > 0) {
             res.send({
-                message: "Successful login!",
                 id: rows[0].id
             })
         }
         else {
             res.send({
-                message: "Invalid Username or Password."
+                message: "Invalid Username or Password"
             })
         }
     })
@@ -55,21 +61,20 @@ app.post("/create", (req, res) => {
                         if (err) console.error(err)
                         if (!this.lastID) this.lastID = 0
                         res.send({
-                            message: "Your account was successfully created.",
                             id: this.lastID
                         })
                     })
                 }
                 else {
                     res.send({
-                        message: `The email ${user.email} is already in use.`
+                        message: `The email \`${user.email}\` is already in use`
                     })
                 }
             })
         }
         else {
             res.send({
-                message: `The username ${user.username} is already in use.`
+                message: `The username \`${user.username}\` is already in use`
             })
         }
     })
