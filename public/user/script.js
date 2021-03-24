@@ -9,5 +9,4 @@ function addUserInfo() {
             $username.innerHTML = `<strong>${users[parseInt(localStorage.getItem("id")) - 1].username}</strong>`
         })
         .catch(err => console.error(err))
-        
 }
