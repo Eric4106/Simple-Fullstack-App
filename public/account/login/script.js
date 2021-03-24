@@ -1,5 +1,7 @@
 document.getElementById("login").onsubmit = login;
 
+var $error = document.getElementById("error")
+
 function login(e) {
     e.preventDefault()
     fetch("/login", {
@@ -15,8 +17,8 @@ function login(e) {
         .then(res => res.json())
         .then(res => {
             localStorage.setItem("id", res.id)
-            if (res.message == "Successful login!") location.href = "/user/profile.html" //consider location.replace("/user/profile.html")
-            alert(res.message)//make this an html later
+            if (res.message) $error.innerHTML = res.message
+            else location.href = "/user/profile.html" //consider location.replace("/user/profile.html")
         })
-        .catch(error => console.error(error))
+        .catch(err => console.error(err))
 }
