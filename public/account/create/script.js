@@ -1,6 +1,6 @@
 document.getElementById("create").onsubmit = create
 
-let $error = document.getElementById("error")
+var $error = document.getElementById("error")
 
 function create(e) {
     e.preventDefault()
@@ -49,10 +49,10 @@ function create(e) {
         .then(res => res.json())
         .then(res => {
             localStorage.setItem("id", res.id)
-            if (res.message == "Your account was successfully created.") location.href = "/user/profile.html" //consider location.replace("/user/profile.html")
-            alert(res.message)//make this an html later
+            if (res.message) $error.innerHTML = res.message
+            else location.href = "/user/profile.html" //consider location.replace("/user/profile.html")
         })
-        .catch(error => console.error(error))
+        .catch(err => console.error(err))
 }
 
 function validUsername(username) {

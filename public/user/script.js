@@ -6,7 +6,8 @@ function addUserInfo() {
     fetch("/userData")
         .then(res => res.json())
         .then(users => {
-            $username.innerHTML = `<strong>${users[parseInt(localStorage.getItem("id")) - 1].username}</strong>`
+            if (users[parseInt(localStorage.getItem("id")) - 1]) $username.innerHTML = `<strong>${users[parseInt(localStorage.getItem("id")) - 1].username}</strong>`
+            else $username.innerHTML = `ERROR: No user inputed`
         })
         .catch(err => console.error(err))
 }
