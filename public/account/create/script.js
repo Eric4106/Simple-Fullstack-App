@@ -11,7 +11,10 @@ function create(e) {
     switch (validUsername(username)) {
         case "length":
             $error.innerHTML = `<h4>Username must be 8 - 32 characters long.</h4>`
-            return;//note to self, eric. mention return vs break.
+            return;
+        default:
+            $error.innerHTML = ``
+            break;
     }
     if (password != document.getElementById("password2").value) {
         $error.innerHTML = `<h4>Your passwords do not match.</h4>`

@@ -1,6 +1,6 @@
 var overlay = document.getElementsByClassName("overlay")[0]
 var buttonsCollection = document.getElementsByClassName("overlay-button")
-var buttons = [];
+var buttons = []
 for (let i = 0; i < buttonsCollection.length; i++) {
     buttons[i] = buttonsCollection[i]
 }
@@ -38,4 +38,11 @@ function closeNav() {
     buttons.forEach(button => {
         button.style.fontSize = "0px"
     })
+}
+
+var rowCollection = document.getElementsByClassName("row")
+
+for (let i = 0; i < rowCollection.length; i++) {
+    var images = 4
+    rowCollection[i].style.width = `${(images + 1) * 20}%`
 }
