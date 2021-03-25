@@ -7,6 +7,7 @@ app.use(express.static('public'))
 app.use(express.json())
 
 app.get("/", (req, res) => {//For future reference- https://expressjs.com/en/guide/routing.html
+    console.log(`Visior: ${req.ip} on main route`)
     res.redirect("/home/index.html")
 })
 
