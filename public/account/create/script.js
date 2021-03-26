@@ -1,3 +1,7 @@
+if (localStorage.getItem("id")) {
+    location.replace("/user/profile.html")
+}
+
 document.getElementById("create").onsubmit = create
 
 var $error = document.getElementById("error")
@@ -51,7 +55,7 @@ function create(e) {
     })
         .then(res => res.json())
         .then(res => {
-            localStorage.setItem("id", res.id)
+            if (res.id) localStorage.setItem("id", res.id)
             if (res.message) $error.innerHTML = res.message
             else location.href = "/user/profile.html" //consider location.replace("/user/profile.html")
         })

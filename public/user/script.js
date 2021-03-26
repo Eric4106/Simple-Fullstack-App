@@ -3,7 +3,7 @@ var $username = document.getElementById("username")
 addUserInfo()
 
 function addUserInfo() {
-    fetch("/userData")
+    fetch("/users")
         .then(res => res.json())
         .then(users => {
             if (users[parseInt(localStorage.getItem("id")) - 1]) $username.innerHTML = `<strong>${users[parseInt(localStorage.getItem("id")) - 1].username}</strong>`

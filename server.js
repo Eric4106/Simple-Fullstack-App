@@ -10,8 +10,8 @@ app.get("/", (req, res) => {//For future reference- https://expressjs.com/en/gui
     res.redirect("/home/index.html")
 })
 
-app.get("/userData", (req,res) => {
-    const userSql = "SELECT * FROM users"
+app.get("/users", (req, res) => {
+    const userSql = "SELECT username FROM users"
     db.all(userSql, [], (err, rows) => {
         if (err) console.error(err)
         res.send(rows)
@@ -22,10 +22,7 @@ app.get("/userData", (req,res) => {
  * 404 Page | Always keep as final get()
  */
 app.get("*", (req, res) => {
-    res.send(`
-    <h1>Error 404</h1><br>
-    <p>Sorry. The page you are looking for does not exist.</p>
-    <a href="/home/index.html">Back to home</a>`)
+    res.redirect("/home/404.html")
 })
 
 app.post("/login", (req, res) => {
@@ -57,11 +54,16 @@ app.post("/create", (req, res) => {
                 if (err) console.error(err)
                 if (!(rows && rows.length > 0)) {
                     const createSQL = "INSERT INTO users (username, password, email, dob) VALUES (?, ?, ?, ?)"
+                    console.log(`INSERT INTO users (username, password, email, dob) VALUES (${user.username}, ${user.password}, ${user.email}, ${user.dob})`)
                     db.run(createSQL, [user.username, user.password, user.email, user.dob], (err) => {
                         if (err) console.error(err)
-                        if (!this.lastID) this.lastID = 0
-                        res.send({
-                            id: this.lastID
+                        const lastSQL = "SELECT id FROM users WHERE username = ?"
+                        db.all(lastSQL, [user.username], (err, rows) => {
+                            if (err) console.error(err)
+                            res.send({
+                                id: rows[0].id
+                            })
+                            console.log(rows[0].id)
                         })
                     })
                 }
