@@ -72,12 +72,31 @@ h2 {
 
 .row {
     width: 100%;
-    display: inline-block;
+    display: inline-flex;
 }
 
-.images {
+.tile {
+    border: solid #b0b 2px;
+    display: inline-block;
+    width: 20%;
+    height: max-content;
+}
+
+.tile h3 {
+    margin: 25% auto;
+    text-align: center;
+    font-size: 1.5em;
+}
+
+.tile h3 a {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.tiles {
     float: left;
     width: 80%;
+    display: inline-flex;
 }
 
 img {
@@ -86,7 +105,7 @@ img {
 }
 
 .more {
-    float: right;
+    display: inline-block;
     width: 20%;
     height: max-content;
 }
