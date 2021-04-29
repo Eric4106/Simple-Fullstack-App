@@ -6,15 +6,38 @@ const db = new sqlite3.Database('./db/dotify.db')
 app.use(express.static('public'))
 app.use(express.json())
 
-app.get("/", (req, res) => {//For future reference- https://expressjs.com/en/guide/routing.html
+app.get("/", (req, res) => {//For future reference - https://expressjs.com/en/guide/routing.html
     res.redirect("/home/index.html")
 })
 
-app.get("/users", (req, res) => {
-    const userSql = "SELECT username FROM users"
-    db.all(userSql, [], (err, rows) => {
+app.get("/playlists/*", (req, res) => {
+    let id = parseInt(req.originalUrl.slice(11, req.originalUrl.length))
+    if (isNaN(id)) return
+    const playlistsSQL = "SELECT * FROM playlists WHERE user_id = ?"
+    db.all(playlistsSQL, [id], (err, rows) => {
         if (err) console.error(err)
         res.send(rows)
+    })
+})
+
+app.get("/playlist/*", (req, res) => {//I think I could have done this better with params or quereys - http://expressjs.com/en/api.html#req.params
+    let id = parseInt(req.originalUrl.slice(10, req.originalUrl.length))
+    if (isNaN(id)) return
+    const playlistSQL = "SELECT * FROM playlists WHERE id = ?"
+    db.get(playlistSQL, [id], (err, row) => {
+        if (err) console.error(err)
+        if (row) res.send(row)
+        else res.redirect("/home/404.html")
+    })
+})
+
+app.get("/user/*", (req, res) => {
+    let id = parseInt(req.originalUrl.slice(6, req.originalUrl.length))
+    if (isNaN(id)) return
+    const userSQL = "SELECT * FROM users WHERE id = ?"
+    db.get(userSQL, [id], (err, row) => {
+        if (err) console.error(err)
+        res.send(row)
     })
 })
 
@@ -28,42 +51,36 @@ app.get("*", (req, res) => {
 app.post("/login", (req, res) => {
     const user = req.body
     const loginSQL = "SELECT id FROM users WHERE username = ? AND password = ?"
-    db.all(loginSQL, [user.username, user.password], (err, rows) => {//Look at using db.get() instead of db.all() - https://www.sqlitetutorial.net/sqlite-nodejs/query/ - I think all() gives an array when get() gives us an object as the first row the db finds
+    db.get(loginSQL, [user.username, user.password], (err, row) => {
         if (err) console.error(err)
-        if (rows && rows.length > 0) {
-            res.send({
-                id: rows[0].id
-            })
-        }
-        else {
-            res.send({
-                message: "Invalid Username or Password"
-            })
-        }
+        if (row) res.send({
+            id: row.id
+        })
+        else res.send({
+            message: "Invalid Username or Password"
+        })
     })
 })
 
 app.post("/create", (req, res) => {
     const user = req.body
     const usernameSQL = "SELECT id FROM users WHERE username = ?"
-    db.all(usernameSQL, [user.username], (err, rows) => {
+    db.get(usernameSQL, [user.username], (err, row) => {
         if (err) console.error(err)
-        if (!(rows && rows.length > 0)) {
+        if (!row) {
             const emailSQL = "SELECT id FROM users WHERE email = ?"
-            db.all(emailSQL, [user.email], (err, rows) => {
+            db.get(emailSQL, [user.email], (err, row) => {
                 if (err) console.error(err)
-                if (!(rows && rows.length > 0)) {
+                if (!row) {
                     const createSQL = "INSERT INTO users (username, password, email, dob) VALUES (?, ?, ?, ?)"
-                    console.log(`INSERT INTO users (username, password, email, dob) VALUES (${user.username}, ${user.password}, ${user.email}, ${user.dob})`)
                     db.run(createSQL, [user.username, user.password, user.email, user.dob], (err) => {
                         if (err) console.error(err)
                         const lastSQL = "SELECT id FROM users WHERE username = ?"
-                        db.all(lastSQL, [user.username], (err, rows) => {
+                        db.get(lastSQL, [user.username], (err, row) => {
                             if (err) console.error(err)
                             res.send({
-                                id: rows[0].id
+                                id: row.id//Look at using signed tokens - https://www.npmjs.com/package/cookie-parser - http://expressjs.com/en/api.html#res.cookie
                             })
-                            console.log(rows[0].id)
                         })
                     })
                 }

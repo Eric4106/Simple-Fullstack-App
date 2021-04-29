@@ -39,10 +39,3 @@ function closeNav() {
         button.style.fontSize = "0px"
     })
 }
-
-var rowCollection = document.getElementsByClassName("row")
-
-for (let i = 0; i < rowCollection.length; i++) {
-    var images = 4
-    rowCollection[i].style.width = `${(images + 1) * 20}%`
-}

@@ -54,9 +54,9 @@ function create(e) {
         }
     })
         .then(res => res.json())
-        .then(res => {
-            if (res.id) localStorage.setItem("id", res.id)
-            if (res.message) $error.innerHTML = res.message
+        .then(user => {
+            if (user.id) localStorage.setItem("id", user.id)
+            if (user.message) $error.innerHTML = user.message
             else location.href = "/user/profile.html" //consider location.replace("/user/profile.html")
         })
         .catch(err => console.error(err))
