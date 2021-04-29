@@ -1,3 +1,4 @@
+if (!localStorage.getItem("id")) location.replace("/login/login.html")
 var $username = document.getElementById("username")
 
 addUserInfo()
