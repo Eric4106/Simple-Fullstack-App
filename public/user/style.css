@@ -66,7 +66,50 @@ nav button:hover{
     Article Stuff
    \/ \/ \/ \/ \/ */
 
+<<<<<<< Updated upstream
 h2 {
+=======
+   button:hover{
+    background-color: #f4f;
+    border: solid #b0b 2px;
+    color: #181818;
+}
+
+button {
+    background-color:#181818;
+    border: solid #181818 2px;
+    color: #f4f;
+    padding: 4px 12px;
+    border-radius: 12px;
+    transition-duration: 0.1s;
+    margin: 15px;
+}
+   
+   .column {
+    float: right;
+    width: 100%;
+    padding: 10px;
+    background-color:#181818;
+  }
+
+#column1 {
+    float: left;
+    width: 8%;
+    padding:10px;
+    background-color: #111;
+    position: sticky;
+    top:0;
+    left:0;
+}
+
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  h2 {
+>>>>>>> Stashed changes
     padding: 2px 8px;
 }
 
