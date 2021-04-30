@@ -11,7 +11,7 @@ app.get("/", (req, res) => {//For future reference - https://expressjs.com/en/gu
 })
 
 app.get("/playlists/*", (req, res) => {
-    let id = parseInt(req.originalUrl.slice(11, req.originalUrl.length))
+    const id = parseInt(req.originalUrl.slice(11))
     if (isNaN(id)) return
     const playlistsSQL = "SELECT * FROM playlists WHERE user_id = ?"
     db.all(playlistsSQL, [id], (err, rows) => {
@@ -20,11 +20,11 @@ app.get("/playlists/*", (req, res) => {
     })
 })
 
-app.get("/playlist/*", (req, res) => {//I think I could have done this better with params or quereys - http://expressjs.com/en/api.html#req.params
-    let id = parseInt(req.originalUrl.slice(10, req.originalUrl.length))
-    if (isNaN(id)) return
-    const playlistSQL = "SELECT * FROM playlists WHERE id = ?"
-    db.get(playlistSQL, [id], (err, row) => {
+app.get("/playlist/:userId/:playlistId", (req, res) => {//I think I could have done this better with params or quereys - http://expressjs.com/en/api.html#req.params
+    const {userId} = req.params
+    const {playlistId} = req.params
+    const playlistSQL = "SELECT * FROM playlists WHERE user_id = ? AND id = ?"
+    db.get(playlistSQL, [userId, playlistId], (err, row) => {
         if (err) console.error(err)
         if (row) res.send(row)
         else res.redirect("/home/404.html")
@@ -32,7 +32,7 @@ app.get("/playlist/*", (req, res) => {//I think I could have done this better wi
 })
 
 app.get("/user/*", (req, res) => {
-    let id = parseInt(req.originalUrl.slice(6, req.originalUrl.length))
+    const id = parseInt(req.originalUrl.slice(6))
     if (isNaN(id)) return
     const userSQL = "SELECT * FROM users WHERE id = ?"
     db.get(userSQL, [id], (err, row) => {
