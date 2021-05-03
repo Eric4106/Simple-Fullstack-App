@@ -18,7 +18,7 @@ fetch(`/playlists/${localStorage.getItem("id")}`)
             `
         }).join("")
         if (playlistTileCount == 0) {
-            $playlistMore.innerHTML = `<h3><a>You have no playlists<br><br>&plus; Add Playlists</a></h3>`
+            $playlistMore.innerHTML = `<h3>You have no playlists</h3><h3><a href="./add/playlist.html">&plus; Add Playlists</a></h3>`
         }
         else {
             $playlistTiles.style.width = `${playlistTileCount * 20}%`

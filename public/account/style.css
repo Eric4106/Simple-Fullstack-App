@@ -5,3 +5,9 @@ button{
 #error {
     margin-left: 2em;
 }
+
+#color {
+    border: none;
+    background: none;
+    width: 5em;
+}
