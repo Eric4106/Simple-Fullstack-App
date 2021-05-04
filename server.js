@@ -48,6 +48,18 @@ app.get("*", (req, res) => {
     res.redirect("/home/404.html")
 })
 
+app.post("/playlist", (req, res) => {
+    const playlist = req.body
+    const playlistSQL = "INSERT INTO playlists (title, color, user_id) VALUES (?, ?, ?)"
+    db.run(playlistSQL, [playlist.title, playlist.color, playlist.userId], (err) => {
+        if (err) console.error(err)
+        db.get("SELECT last_insert_rowid()", [], (err, row) => {
+            if (err) console.error(err)
+            res.send(row)
+        })
+    })
+})
+
 app.post("/login", (req, res) => {
     const user = req.body
     const loginSQL = "SELECT id FROM users WHERE username = ? AND password = ?"
