@@ -10,32 +10,38 @@ app.get("/", (req, res) => {//For future reference - https://expressjs.com/en/gu
     res.redirect("/home/index.html")
 })
 
-app.get("/playlists/*", (req, res) => {
-    const id = parseInt(req.originalUrl.slice(11))
-    if (isNaN(id)) return
+app.get("/playlists/:userId", (req, res) => {
+    const {userId} = req.params
     const playlistsSQL = "SELECT * FROM playlists WHERE user_id = ?"
-    db.all(playlistsSQL, [id], (err, rows) => {
+    db.all(playlistsSQL, [userId], (err, rows) => {
         if (err) console.error(err)
         res.send(rows)
     })
 })
 
-app.get("/playlist/:userId/:playlistId", (req, res) => {//I think I could have done this better with params or quereys - http://expressjs.com/en/api.html#req.params
-    const {userId} = req.params
+app.get("/playlist/:playlistId", (req, res) => {
     const {playlistId} = req.params
-    const playlistSQL = "SELECT * FROM playlists WHERE user_id = ? AND id = ?"
-    db.get(playlistSQL, [userId, playlistId], (err, row) => {
+    const playlistSQL = "SELECT * FROM playlists WHERE id = ?"
+    db.get(playlistSQL, [playlistId], (err, row) => {
         if (err) console.error(err)
         if (row) res.send(row)
         else res.redirect("/home/404.html")
     })
 })
 
-app.get("/user/*", (req, res) => {
-    const id = parseInt(req.originalUrl.slice(6))
-    if (isNaN(id)) return
+app.get("/songs/:playlistId", (req, res) => {
+    const {playlistId} = req.params
+    const songsSQL = "SELECT * FROM songs INNER JOIN entries ON songs.id = entries.song_id WHERE playlist_id = ?"
+    db.all(songsSQL, [playlistId], (err, rows) => {
+        if (err) console.error(err)
+        res.send(rows)
+    })
+})
+
+app.get("/user/:userId", (req, res) => {
+    const {userId} = req.params
     const userSQL = "SELECT * FROM users WHERE id = ?"
-    db.get(userSQL, [id], (err, row) => {
+    db.get(userSQL, [userId], (err, row) => {
         if (err) console.error(err)
         res.send(row)
     })
@@ -48,14 +54,27 @@ app.get("*", (req, res) => {
     res.redirect("/home/404.html")
 })
 
-app.post("/playlist", (req, res) => {
+app.post("/playlists", (req, res) => {
     const playlist = req.body
     const playlistSQL = "INSERT INTO playlists (title, color, user_id) VALUES (?, ?, ?)"
     db.run(playlistSQL, [playlist.title, playlist.color, playlist.userId], (err) => {
         if (err) console.error(err)
+        res.send({})
+    })
+})
+
+app.post("/songs", (req, res) => {
+    const song = req.body
+    const songSQL = "INSERT INTO songs (title, artist, genre) VALUES (?, ?, ?)"//maybe change to be per each user
+    db.run(songSQL, [song.title, song.artist, song.genre], (err) => {
+        if (err) console.error(err)
         db.get("SELECT last_insert_rowid()", [], (err, row) => {
             if (err) console.error(err)
-            res.send(row)
+            const entrySQL = "INSERT INTO entries (playlist_id, song_id) VALUES (?, ?)"
+            db.run(entrySQL, [song.playlistId, parseInt(JSON.stringify(row).slice(23, JSON.stringify(row).length - 1))], (err) => {
+                if (err) console.error(err)
+                res.send({})
+            })
         })
     })
 })
@@ -87,11 +106,10 @@ app.post("/create", (req, res) => {
                     const createSQL = "INSERT INTO users (username, password, email, dob) VALUES (?, ?, ?, ?)"
                     db.run(createSQL, [user.username, user.password, user.email, user.dob], (err) => {
                         if (err) console.error(err)
-                        const lastSQL = "SELECT id FROM users WHERE username = ?"
-                        db.get(lastSQL, [user.username], (err, row) => {
+                        db.get("SELECT last_insert_rowid()", [], (err, row) => {
                             if (err) console.error(err)
                             res.send({
-                                id: row.id//Look at using signed tokens - https://www.npmjs.com/package/cookie-parser - http://expressjs.com/en/api.html#res.cookie
+                                id: parseInt(JSON.stringify(row).slice(23, JSON.stringify(row).length - 1))//Look at using signed tokens - https://www.npmjs.com/package/cookie-parser - http://expressjs.com/en/api.html#res.cookie
                             })
                         })
                     })

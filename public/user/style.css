@@ -78,6 +78,7 @@ h2 {
 .tile {
     border: solid #b0b 2px;
     display: inline-block;
+    text-align: center;
     width: 20%;
     height: max-content;
 }
