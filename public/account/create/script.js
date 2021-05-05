@@ -45,8 +45,7 @@ function create(e) {
         body: JSON.stringify({
             username: username,
             password: password,
-            email: document.getElementById("email").value,
-            dob: document.getElementById("dob").value
+            email: document.getElementById("email").value
         }),
         method: "POST",
         headers: {

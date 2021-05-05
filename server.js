@@ -43,7 +43,8 @@ app.get("/user/:userId", (req, res) => {
     const userSQL = "SELECT * FROM users WHERE id = ?"
     db.get(userSQL, [userId], (err, row) => {
         if (err) console.error(err)
-        res.send(row)
+        if (row) res.send(row)
+        else res.send({})
     })
 })
 
@@ -66,15 +67,12 @@ app.post("/playlists", (req, res) => {
 app.post("/songs", (req, res) => {
     const song = req.body
     const songSQL = "INSERT INTO songs (title, artist, genre) VALUES (?, ?, ?)"//maybe change to be per each user
-    db.run(songSQL, [song.title, song.artist, song.genre], (err) => {
+    db.run(songSQL, [song.title, song.artist, song.genre], function(err) {
         if (err) console.error(err)
-        db.get("SELECT last_insert_rowid()", [], (err, row) => {
+        const entrySQL = "INSERT INTO entries (playlist_id, song_id) VALUES (?, ?)"
+        db.run(entrySQL, [song.playlistId, this.lastID], (err) => {
             if (err) console.error(err)
-            const entrySQL = "INSERT INTO entries (playlist_id, song_id) VALUES (?, ?)"
-            db.run(entrySQL, [song.playlistId, parseInt(JSON.stringify(row).slice(23, JSON.stringify(row).length - 1))], (err) => {
-                if (err) console.error(err)
-                res.send({})
-            })
+            res.send({})
         })
     })
 })
@@ -104,13 +102,10 @@ app.post("/create", (req, res) => {
                 if (err) console.error(err)
                 if (!row) {
                     const createSQL = "INSERT INTO users (username, password, email, dob) VALUES (?, ?, ?, ?)"
-                    db.run(createSQL, [user.username, user.password, user.email, user.dob], (err) => {
+                    db.run(createSQL, [user.username, user.password, user.email, user.dob], function(err) {
                         if (err) console.error(err)
-                        db.get("SELECT last_insert_rowid()", [], (err, row) => {
-                            if (err) console.error(err)
-                            res.send({
-                                id: parseInt(JSON.stringify(row).slice(23, JSON.stringify(row).length - 1))//Look at using signed tokens - https://www.npmjs.com/package/cookie-parser - http://expressjs.com/en/api.html#res.cookie
-                            })
+                        res.send({
+                            id: this.lastID//Look at using signed tokens - https://www.npmjs.com/package/cookie-parser - http://expressjs.com/en/api.html#res.cookie
                         })
                     })
                 }
